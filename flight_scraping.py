@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta, datetime
 import time
+from os_check import returnOS
 
 def scrapeRound(origin, destination, startdate, enddate, requests,results_round):   
     
@@ -18,7 +19,10 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     agents = ["Chrome/73.0.3683.68"]
     chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
     chrome_options.add_experimental_option('useAutomationExtension', False)
-    driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    if returnOS() == 'Darwin':
+        driver = webdriver.Chrome('chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    else:
+        driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(5)
     #Get on the url generated above
     driver.get(url)
@@ -130,7 +134,10 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     agents = ["Chrome/73.0.3683.68"]
     chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
     chrome_options.add_experimental_option('useAutomationExtension', False) 
-    driver = webdriver.Chrome("chromedriver.exe", options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    if returnOS() == 'Darwin':
+        driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+    else:
+        driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(5)
     #Get on the url generated above
     driver.get(url)
