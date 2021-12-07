@@ -111,16 +111,20 @@ def df_to_dict(clustered_df):
 
 
 def airportCode(origin,dest):
+    origin = origin.lower().replace(' ','_')
+    dest = dest.lower().replace(' ','_')
     col = ['municipality','local_code','type','score']
     df = pd.read_csv("us-airports.csv", usecols = col)
     df = df.iloc[1: , :]
     df_filtered_large = df[df['type'] == 'large_airport']
     df_filtered_medium = df[df['type'] == 'medium_airport']
     df_filtered = pd.concat([df_filtered_large, df_filtered_medium])
-    # print(df_filtered)
+    
     
     df_filtered['municipality'] = df_filtered['municipality'].str.lower().str.replace(" ","_")
+    print(df_filtered)
     origin_df = df_filtered[df_filtered['municipality'] == origin]
+    
     if(not origin_df.empty):
         origin_found = True
         origin_code = origin_df['local_code'].loc[origin_df['score'] == origin_df['score'].max()]
@@ -130,10 +134,13 @@ def airportCode(origin,dest):
     
     
     dest_df = df_filtered[df_filtered['municipality'] == dest]
+    print(dest_df)
     if(not dest_df.empty):
         dest_found = True
-        dest_code = dest_df['local_code'].loc[dest_df['score'] == dest_df['score'].max()]
-        dest_code = dest_code.to_string(index=False)
+        dest_df['score'] = dest_df['score'].astype(str).astype(int)
+        dest_df.sort_values(by=['score'], ascending=False, inplace = True)
+        dest_code = dest_df['local_code'].iloc[0]
+      
     else:
         dest_found = False
         
@@ -141,30 +148,30 @@ def airportCode(origin,dest):
     return(origin_found and dest_found, origin_code, dest_code)
     
         
-# def main():
-#     dest_city = 'Pittsburgh,Pennsylvania'
-#     dest_state = 'Texas'
-#     #from user
-#     found,city,state = cityStateMapping(dest_city)
-#     attractions = touristSpots(city,state)
+'''def main():
+    dest_city = 'Miami'
+    origin = 'Pittsburgh'
+    dest_state = 'Texas'
+    #from user
+    found,city,state = cityStateMapping(dest_city)
+    attractions = touristSpots(city,state)
     
-#     # Number of Travel days entered by user
-#     days = 3 #from user
+    # Number of Travel days entered by user
+    days = 3 #from user
     
-#     #attractions = ['Mount Washington','The Andy Warhol Museum','Heinz Field','Phipps Conservatory','Point State Park','Pittsburgh Zoo & PPG Aquarium','Carnegie Mellon University']
+    #attractions = ['Mount Washington','The Andy Warhol Museum','Heinz Field','Phipps Conservatory','Point State Park','Pittsburgh Zoo & PPG Aquarium','Carnegie Mellon University']
     
-#     df = searchLatLng(state,attractions)
-#     clustered_df = clusterLoc(df,days)
-#     df_to_dict(clustered_df)
-#     airportCode('Chicago', 'New York')
+    df = searchLatLng(state,attractions)
+    clustered_df = clusterLoc(df,days)
+    df_to_dict(clustered_df)
+    airportCode(origin,dest_city)
     
     
 
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()
     
-    
-    
+'''  
     
     
     
