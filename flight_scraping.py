@@ -19,7 +19,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     chrome_options = webdriver.ChromeOptions()
     agents = ["Chrome/73.0.3683.68"]
     chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('useAutomationExtension', False)
     if returnOS() == 'Darwin':
         driver = webdriver.Chrome(os.getcwd() + '/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
@@ -107,7 +107,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
                            "destination" : destination,
                            "startdate" : startdate,
                            "enddate" : enddate,
-                           "price" : price,
+                           "price" : price[0:len(airline_list)],
                            "airline" : airline_list[:,0],
                            "currency": "USD",
                            "departure_time_origin_flight1": [m+str(n) for m,n in zip(departureTime[:,0],meridiem[:,0])],
@@ -204,7 +204,7 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
                        "destination" : destination,
                        "startdate" : startdate,
                        "airline" : airline_list,
-                       "price": price,
+                       "price": price[0:len(airline_list)],
                        "currency": "USD",
                        "departure_time_origin_flight": [m+str(n) for m,n in zip(departuretime[:],meridiem[:, 0])],
                        "arrival_time_destintion_flight": [m+str(n) for m,n in zip(arrivalTime[:],meridiem[:, 1])]
