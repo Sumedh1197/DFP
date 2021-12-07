@@ -18,6 +18,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     chrome_options = webdriver.ChromeOptions()
     agents = ["Chrome/73.0.3683.68"]
     chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
+    chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('useAutomationExtension', False)
     if returnOS() == 'Darwin':
         driver = webdriver.Chrome('chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
@@ -132,7 +133,8 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     #Setting up the webdriver for chrome and configuring the agent
     chrome_options = webdriver.ChromeOptions()
     agents = ["Chrome/73.0.3683.68"]
-    chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
+    chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"') 
+    chrome_options.add_argument("--headless")   
     chrome_options.add_experimental_option('useAutomationExtension', False) 
     if returnOS() == 'Darwin':
         driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
@@ -226,6 +228,7 @@ def call_round_function(origin,destination,startdate,enddate):
         requests = requests + 1
         bool_res,result_df= scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     results_round_df = result_df.rename(columns={'airline': 'Airline', 'price': 'Price','departure_time_origin_flight1':origin+' departure time','arrival_time_destintion_flight1':destination+' arrival time','departure_time_from_destintion_flight2':destination+' departure time','arrival_time_to_origin_flight2':origin+' arrival time','origin':'Origin','destination':'Destination','currency':'Currency'})
+    results_round_df= results_round_df.sort_values(by=['Price'])
     return results_round_df
 
 def call_single_function(origin,destination,startdate):
@@ -236,6 +239,7 @@ def call_single_function(origin,destination,startdate):
         requests = requests + 1
         bool_res,result_df= scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     results_single_df = result_df.rename(columns={'airline': 'Airline', 'price': 'Price','departure_time_origin_flight':origin+' departure time','arrival_time_destintion_flight':destination+' arrival time','origin':'Origin','destination':'Destination','currency':'Currency'})
+    results_single_df= results_single_df.sort_values(by=['Price'])
     return results_single_df
     
 # if __name__=="__main__":
