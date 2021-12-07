@@ -5,7 +5,7 @@
 3. All the output is displayed on the GUI.
 4. User must input a combination of  "City, State" in the US for Origin and Destination
 5. If the entered combination is valid, the user can check for three things:
-	a. Check the weather forecast of the destination city for the next 5 	 days.
+	a. Check the weather forecast of the destination city for the next 5 days.
 	b. Scrape for flights for the given dates. User will be returned a tabular format of the best flights scraped from Kayak.com. 
 	c. User can retrieve the destination city attractions clustered by their location based on a geolocational mapping function.
 
