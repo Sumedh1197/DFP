@@ -1,0 +1,9 @@
+pandas
+matplotlib
+sklearn
+requests
+bs4 
+shapely
+selenium
+pyqt5
+geopandas
