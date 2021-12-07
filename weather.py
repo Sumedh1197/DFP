@@ -34,7 +34,11 @@ def fetchWeather(cityName):
     result=weather_df.groupby('date_column').agg({'Max Temperature':'max','Min Temperature':'min','Temperature':'mean','Description':lambda x: pd.Series.mode(x).iat[0]})
     result.reset_index(level=0, inplace=True)
     return result
-
+'''
+Function returns the weather mode
+of the dataframe provided in argument based on the description column
+@param: fetchWeather dataframe (df)
+'''
 #Check the most common weather mode for the day
 def weather_mode(df):
     a= df['Description'].mode()[0]
