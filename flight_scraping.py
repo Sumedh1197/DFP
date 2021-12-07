@@ -10,7 +10,16 @@ from datetime import date, timedelta, datetime
 import time
 import os
 from os_check import returnOS
-
+'''
+Function returns the boolean value of success/failure and dataframe of the scraped round trip
+@param: origin, destination, startdate, enddate, requests,results_round where:
+        1. origin- user's origin city 
+        2. desitnation- user's destination city 
+        3. startdate- user's travel start date 
+        4. enddate- user's travel end date 
+        5. requests- Variable for number of requests made 
+        6. results_round- Dataframe to merge with correct column names
+'''
 def scrapeRound(origin, destination, startdate, enddate, requests,results_round):   
     
     #URL to hit kayak.com
@@ -124,11 +133,17 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     #Wait for 5 seconds until next request
     time.sleep(10) 
     return "success",results_round
-
+'''
+Function returns the boolean value of success/failure and dataframe of the scraped single trip
+@param: origin, destination, startdate, requests,results_single where:
+        1. origin- user's origin city 
+        2. desitnation- user's destination city 
+        3. startdate- user's travel start date 
+        4. requests- Variable for number of requests made 
+        5. results_single- Dataframe to merge with correct column names
+'''
 #Function to scrape flights for a single trip 
-def scrapeOneWay(origin, destination, startdate, requests,results_single):
-    
-    
+def scrapeOneWay(origin, destination, startdate, requests,results_single):  
     #URL to hit kayak.com
     url = "https://www.kayak.com/flights/" + origin + "-" + destination + "/" + startdate + "?sort=bestflight_a"
     #Setting up the webdriver for chrome and configuring the agent
@@ -219,7 +234,10 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     time.sleep(5)  
     return "success",results_single
 
-
+'''
+Function calls the scrapeRound function
+@param: origin,destination,startdate,enddate
+'''
 def call_round_function(origin,destination,startdate,enddate):
     requests = 0
     results_round= pd.DataFrame(columns=['origin','destination','startdate','enddate','price','airline','currency','departure_time_origin_flight1','arrival_time_destintion_flight1','departure_time_from_destintion_flight2','arrival_time_to_origin_flight2'])
@@ -230,7 +248,10 @@ def call_round_function(origin,destination,startdate,enddate):
     results_round_df = result_df.rename(columns={'airline': 'Airline', 'price': 'Price','departure_time_origin_flight1':origin+' departure time','arrival_time_destintion_flight1':destination+' arrival time','departure_time_from_destintion_flight2':destination+' departure time','arrival_time_to_origin_flight2':origin+' arrival time','origin':'Origin','destination':'Destination','currency':'Currency'})
     results_round_df= results_round_df.sort_values(by=['Price'])
     return results_round_df
-
+'''
+Function calls the scrapeOneWay function
+@param: origin,destination,startdate
+'''
 def call_single_function(origin,destination,startdate):
     requests=0
     results_single = pd.DataFrame(columns=['origin','destination','startdate','airline','price','currency','departure_time_origin_flight','arrival_time_destintion_flight'])
