@@ -10,7 +10,7 @@
 	c. User can retrieve the destination city attractions clustered by their location based on a geolocational mapping function.
 
 # How to Run
-1. Instruction: Run TravelBug.py file 
+1. Instruction: Run  gui.py file 
 2. Instruction Video: 
 
 # Installing Additional Packages
@@ -18,11 +18,10 @@
 To install the dependencies, there is a requirements.txt in the repository. Using the following command all can be installed using pip-
 >`pip install -r requirements.txt`
 2.  **Install ChromeDriver**
-ChromeDriver is required for the code written on Selenium for scraping Kayak.com for flights. The Selenium web driver speaks directly to the browser using the browser’s own engine to control it.
-- Download Chrome WebDriver:
-- Visit https://sites.google.com/a/chromium.org/chromedriver/download
-- Select the compatible driver for your Chrome version
-- To check the Chrome version you are using, click on the three vertical dots on the top right corner
-- Then go to Help -> About Google Chrome
-- Move the driver file to a PATH:
-- Go to the downloads directory, unzip the file, and move it to usr/local/bin PATH
+ChromeDriver is required for the code written on Selenium for scraping Kayak.com for flights. Weh have provided the chromedriver for MAC OS and Windows however below is the link for downloading it separately. The Selenium web driver speaks directly to the browser using the browser’s own engine to control it.
+- Download Chrome WebDriver - https://sites.google.com/a/chromium.org/chromedriver/download
+- Chrome agent used: Chrome/73.0.3683.68
+3. **Installing Geopandas**
+Installation of geopandas on MAC OS can be done using pip install geopandas. However on window's we suggest to follow the link below as it is a little more complex: 
+Window's Geopandas installation: https://stackoverflow.com/questions/56958421/pip-install-geopandas-on-windows/60936148
+
