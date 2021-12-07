@@ -1,0 +1,21 @@
+TRAVEL BUG:
+Built a travel planner curated to the user’s interests to provide the most cost-efficient flight options for a single and round trip, weather forecast and recommend tourist attractions for the destination city 
+Planned cluster-wise itinerary using geospatial clustering on tourist spot locations. 
+
+Features- 
+1. Flight scraping using Selenium and BeautifulSoup 
+2. Extracting Weather forecast using the weather API
+3. Using Geospatial clustering to retrieve tourist spot locations for the destination city
+
+Packages used: 
+pandas
+matplotlib
+sklearn
+requests
+bs4 
+shapely
+selenium
+pyqt5
+geopandas
+contextily 
+
