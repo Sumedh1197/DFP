@@ -11,7 +11,7 @@
 
 # How to Run
 1. Instruction: Run  gui.py file 
-2. Instruction Video: 
+2. Instruction Video: https://www.youtube.com/watch?v=LCEgs3Z1kOA
 
 # Installing Additional Packages
 1. **Dependent Packages Installation**
