@@ -29,6 +29,6 @@ def fetchWeather(cityName):
     #Extracting date from datetime column 
     weather_df['date_column'] = pd.to_datetime(weather_df['Date']).dt.date
     #Aggregate the resulting df to retrieve max, min, average conditions for the day along with the most common weather description 
-    result=weather_df.groupby('date_column').agg({'Max Temperature':'max','Min Temperature':'min','Temperature':'mean','Description':pd.Series.mode})
+    result=weather_df.groupby('date_column').agg({'Max Temperature':'max','Min Temperature':'min','Temperature':'mean','Description':lambda x: pd.Series.mode(x).iat[0]})
     result.reset_index(level=0, inplace=True)
     return result
