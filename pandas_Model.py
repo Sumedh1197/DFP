@@ -2,7 +2,10 @@ import sys
 import pandas as pd
 from PyQt5.QtWidgets import QApplication, QTableView
 from PyQt5.QtCore import QAbstractTableModel, Qt
-
+'''
+Class to create the table view for the dataframe
+@param: PyQt table model 
+'''
 class pandasModel(QAbstractTableModel):
 
     def __init__(self, data):
