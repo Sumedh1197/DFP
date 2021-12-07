@@ -7,4 +7,6 @@ shapely
 selenium
 openpyxl
 pyqt5
+lxml
 geopandas
+contextily 
