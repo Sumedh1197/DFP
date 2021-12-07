@@ -9,12 +9,16 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from darktheme.widget_template import DarkPalette
 
+from clustering import *
 from weather import *
 from pandas_Model import *
 from flight_scraping import *
 import sys
 import os
 import pandas as pd
+
+userCity2 = ''
+userState2 = ''
 
 def displayReturnDateLabel():
     if roundTrip.isChecked():
@@ -25,45 +29,55 @@ def displayReturnDateLabel():
         returnDate.hide()
 
 def fetchFlights():
+    global userCity2
+    global userState2
+
     startDate = originDate.date()
     startDate_formatted = str(startDate.toPyDate())
-    print(startDate_formatted)
-    print(roundTrip.isChecked())
     if origin.text() == '' or dest.text() == '':
         statusLabel.move(130,35)
         statusLabel.setText("Please enter an origin and destination city")
         statusLabel.adjustSize()
     else:
-        if roundTrip.isChecked():
-            endDate = returnDate.date()
-            endDate_formatted = str(endDate.toPyDate())
-            print(endDate_formatted)
-            try:
-                df = call_round_function(origin.text(), dest.text(), startDate_formatted, endDate_formatted)
-            except:
-                statusLabel.setText('Could not fetch flights from server. Try Again.')
+        originPlace = origin.text()
+        destPlace = dest.text()
+        booleanVal, userCity, userState = cityStateMapping(originPlace)
+        booleanVal2, userCity2, userState2 = cityStateMapping(destPlace)
+        
+        print(userCity, userCity2)
+
+        if booleanVal==False or booleanVal2==False:
+            statusLabel.setText('Enter valid city-state combination')
         else:
-            try:
-                df = call_single_function(origin.text(), dest.text(), startDate_formatted)
-            except:
-                statusLabel.setText('Could not fetch flights from server. Try Again.')
+            found, originCode, destCode = airportCode(userCity, userCity2)
+            print(found, originCode, destCode)
+            if found == True:
+                if roundTrip.isChecked():
+                    endDate = returnDate.date()
+                    endDate_formatted = str(endDate.toPyDate())
+                    print(endDate_formatted)
+                    df = call_round_function(originCode, destCode, startDate_formatted, endDate_formatted)
+                    # statusLabel.setText('Could not fetch flights from server. Try Again.')
+                else:
+                    df = call_single_function(originCode, destCode, startDate_formatted)
+                    # statusLabel.setText('Could not fetch flights from server. Try Again.')
 
-        print(df)
-        model = pandasModel(df)
-        view = QTableView()
-        view.setModel(model)
-        view.resize(800, 600)
-        statusLabel.setText("")
-        newWindow = QWidget(view)
-        newWindow.resize(800, 800)
-        newLayout = QVBoxLayout(view)
-        newLayout.addWidget(newWindow)
-        newWindow.show()
+            print(df)
+            model = pandasModel(df)
+            view = QTableView()
+            view.setModel(model)
+            view.resize(800, 600)
+            statusLabel.setText("")
+            newWindow = QWidget(view)
+            newWindow.resize(800, 800)
+            newLayout = QVBoxLayout(view)
+            newLayout.addWidget(newWindow)
+            newWindow.show()
 
-        newLayout.addWidget(view)
-        view.show()
-        # app2.show()
-        #sys.exit(app2.exec_())
+            newLayout.addWidget(view)
+            view.show()
+            # app2.show()
+            #sys.exit(app2.exec_())
 
 def displayWeather():
     if dest.text() == '':

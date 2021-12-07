@@ -18,7 +18,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     chrome_options = webdriver.ChromeOptions()
     agents = ["Chrome/73.0.3683.68"]
     chrome_options.add_argument('--user-agent=' + agents[(requests%len(agents))] + '"')    
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('useAutomationExtension', False)
     if returnOS() == 'Darwin':
         driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
