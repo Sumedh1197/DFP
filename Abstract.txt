@@ -1,5 +1,5 @@
 TRAVEL BUG:
-Built a travel planner curated to the user’s interests to provide the most cost-efficient flight options for a single and round trip, weather forecast and recommend tourist attractions for the destination city 
+Travel planner application curated to the user’s interests to provide the most cost-efficient flight options for a single and round trip, forecast weather over trip dates and recommend tourist attractions for the destination city 
 Planned cluster-wise itinerary using geospatial clustering on tourist spot locations. 
 
 Features- 
