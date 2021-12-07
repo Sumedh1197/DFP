@@ -21,7 +21,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('useAutomationExtension', False)
     if returnOS() == 'Darwin':
-        driver = webdriver.Chrome('chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+        driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     else:
         driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(5)
@@ -85,7 +85,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     price = []
     for div in price_list:
         price_temp=div.getText().split('\n')[1].strip()
-        price.append(float(price_temp[1:]))
+        price.append(float(price_temp[1:].replace(',', '')))
         
     #Checks for dealing with inconsistency in sight data to create dataframe 
     if airline_list.shape == (1,2):
@@ -196,7 +196,7 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     price = []
     for div in price_list:
         price_temp=div.getText().split('\n')[1].strip()
-        price.append(float(price_temp[1:]))
+        price.append(float(price_temp[1:].replace(',', '')))
         
     #Creating dataframe 
     df = pd.DataFrame({"origin" : origin,

@@ -16,7 +16,6 @@ def fetchWeather(cityName):
     url = 'https://api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s' % (cityName, api_key) 
     response = requests.get(url).text
     response_json = json.loads(response)
-    print(response_json)
     if response_json['cod'] == '404':
         return pd.DataFrame()
     #Retrieving relevant data from the JSON response
@@ -39,13 +38,13 @@ def fetchWeather(cityName):
 #Check the most common weather mode for the day
 def weather_mode(df):
     a= df['Description'].mode()[0]
-    if(a.str.contains('clouds')):
+    if 'cloud' in a.lower():
         return "clouds"
-    elif(a.str.contains('rain')):
+    elif 'rain' in a.lower():
         return "rain"
-    elif(a.str.contains('sun')):
+    elif 'sun' in a.lower():
         return "sunny"
-    elif(a.str.contains('snow')):
+    elif 'snow' in a.lower():
         return "snow"
     else:
         return "default"   

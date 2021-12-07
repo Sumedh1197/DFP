@@ -9,13 +9,15 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from darktheme.widget_template import DarkPalette
 
+from weather import *
 from pandas_Model import *
 from flight_scraping import *
 import sys
+import os
 import pandas as pd
 
 def displayReturnDateLabel():
-    if round.isChecked():
+    if roundTrip.isChecked():
         returnDateLabel.setText('Return Date: ')
         returnDate.show()
     else:
@@ -23,13 +25,29 @@ def displayReturnDateLabel():
         returnDate.hide()
 
 def fetchFlights():
+    startDate = originDate.date()
+    startDate_formatted = str(startDate.toPyDate())
+    print(startDate_formatted)
+    print(roundTrip.isChecked())
     if origin.text() == '' or dest.text() == '':
+        statusLabel.move(130,35)
         statusLabel.setText("Please enter an origin and destination city")
         statusLabel.adjustSize()
     else:
-        df = call_single_function('JFK', 'LAX', '2021-12-10')
-        # print(df)
-        # data = {'col1':['1','2','3'], 'col2':['4','5','6'], 'col3':['7','8','9']}
+        if roundTrip.isChecked():
+            endDate = returnDate.date()
+            endDate_formatted = str(endDate.toPyDate())
+            print(endDate_formatted)
+            try:
+                df = call_round_function(origin.text(), dest.text(), startDate_formatted, endDate_formatted)
+            except:
+                statusLabel.setText('Could not fetch flights from server. Try Again.')
+        else:
+            try:
+                df = call_single_function(origin.text(), dest.text(), startDate_formatted)
+            except:
+                statusLabel.setText('Could not fetch flights from server. Try Again.')
+
         print(df)
         model = pandasModel(df)
         view = QTableView()
@@ -37,6 +55,7 @@ def fetchFlights():
         view.resize(800, 600)
         statusLabel.setText("")
         newWindow = QWidget(view)
+        newWindow.resize(800, 800)
         newLayout = QVBoxLayout(view)
         newLayout.addWidget(newWindow)
         newWindow.show()
@@ -46,6 +65,47 @@ def fetchFlights():
         # app2.show()
         #sys.exit(app2.exec_())
 
+def displayWeather():
+    if dest.text() == '':
+        statusLabel.move(110,35)
+        statusLabel.setText('Please enter destination city to check weather forecast')
+        statusLabel.adjustSize()
+    else:
+        weatherForecast = fetchWeather(dest.text())
+        print(weatherForecast)
+        statusLabel.setText('')
+        weatherWindow = QWidget()
+        weatherWindow.setWindowTitle('Weather Forecast')
+        weatherWindow.resize(1150, 200)
+        weatherLayout = QHBoxLayout()
+        weatherLayout.addWidget(weatherWindow)
+        pic = QLabel(weatherWindow)
+        pic.setGeometry(20, 20, 200, 200)
+        #use full ABSOLUTE path to the image, not relative
+        picture = weather_mode(weatherForecast)
+        if (picture == 'clouds'):
+            pic.setPixmap(QPixmap(os.getcwd() + "/cloudy.png"))
+        elif (picture == 'rain'):
+            pic.setPixmap(QPixmap(os.getcwd() + "/rainy.png"))
+        elif (picture == 'sunny'):
+            pic.setPixmap(QPixmap(os.getcwd() + "/sunny.png"))
+        elif (picture == 'snow'):
+            pic.setPixmap(QPixmap(os.getcwd() + "/snowflake.png"))
+        else:
+            pic.setPixmap(QPixmap(os.getcwd() + "/sunny_cloudy.png"))
+        weatherStatus = QLabel(weatherWindow)
+        if weatherForecast.empty:
+            weatherStatus.setText('Could not fetch weather forecast data')
+        elif originDate.date() >= datetime.now().date() + timedelta(days = 5):
+            weatherStatus.setText('Weather forecast not available for the given dates')
+        elif originDate.date() <= datetime.now().date() + timedelta(days = 5):
+            toDisplay = ''
+            for i, rows in weatherForecast.iterrows():
+                toDisplay = toDisplay + str(rows['date_column']) + '\t\tMinimum: ' + str(round(rows['Min Temperature'], 2)) + '\t\tMaximum: ' + str(round(rows['Max Temperature'], 2)) + '\t\tAvg. Temperature: ' + str(round(rows['Temperature'], 2)) + '\t\tForecast: ' + rows['Description'] + '\n'
+            weatherStatus.setText(toDisplay)
+        weatherStatus.move(220, 40)
+        weatherWindow.show()
+
 
 app = QApplication([])
 app.setStyle('Fusion')
@@ -53,32 +113,32 @@ app.setPalette(DarkPalette())
 win = QMainWindow()
 win.setGeometry(400, 400, 500, 500)
 win.setWindowTitle('TravelBug')
-# win.setStyleSheet('background-color: #666666')
 
 statusLabel = QLabel(win)
-statusLabel.setText("")
+statusLabel.setText('')
 statusLabel.adjustSize()
 statusLabel.move(130,35)
 
 
 originLabel = QLabel(win)
-originLabel.setText("Origin City")
+originLabel.setText('Origin City, State')
 originLabel.adjustSize()
 originLabel.move(20,86)
 origin = QLineEdit(win)
-origin.move(130, 80)
+origin.move(160, 80)
 
 destLabel = QLabel(win)
-destLabel.setText("Destination City")
+destLabel.setText('Destination City, State')
 destLabel.adjustSize()
 destLabel.move(20,156)
 dest = QLineEdit(win)
-dest.move(130, 150)
+dest.move(160, 150)
 
 weatherButton = QPushButton(win)
 weatherButton.setText("Check Weather Forecast")
 weatherButton.adjustSize()
 weatherButton.move(280, 115)
+weatherButton.clicked.connect(displayWeather)
 
 layout = QGridLayout()
  
@@ -94,10 +154,10 @@ single.setChecked(True)
 single.clicked.connect(displayReturnDateLabel)
 layout.addWidget(single, 0, 0)
  
-round = QRadioButton(win)
-round.setText("Round")
-round.move(40,310)
-round.clicked.connect(displayReturnDateLabel)
+roundTrip = QRadioButton(win)
+roundTrip.setText("Round")
+roundTrip.move(40,310)
+roundTrip.clicked.connect(displayReturnDateLabel)
 layout.addWidget(single, 0, 1)
 
 originDateLabel = QLabel(win)
