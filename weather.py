@@ -16,6 +16,9 @@ def fetchWeather(cityName):
     url = 'https://api.openweathermap.org/data/2.5/forecast?q=%s&appid=%s' % (cityName, api_key) 
     response = requests.get(url).text
     response_json = json.loads(response)
+    print(response_json)
+    if response_json['cod'] == '404':
+        return pd.DataFrame()
     #Retrieving relevant data from the JSON response
     weather_list = []
     columns = ['Date', 'Temperature', 'Feels Like', 'Min Temperature', 'Max Temperature', 'Description', 'Weather']
