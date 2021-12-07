@@ -11,8 +11,7 @@
 
 # How to Run
 1. Instruction: Run  gui.py file 
-2. Instruction Video: https://www.youtube.com/watch?v=LCEgs3Z1kOA
-
+2. Instruction Video: https://youtu.be/laB0nQxFThk
 # Installing Additional Packages
 1. **Dependent Packages Installation**
 To install the dependencies, there is a requirements.txt in the repository. Using the following command all can be installed using pip/pip3 in the terminal-
