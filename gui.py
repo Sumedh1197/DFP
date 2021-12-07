@@ -34,6 +34,7 @@ def fetchFlights():
     global userCity2
     global userState2
 
+    df = pd.DataFrame()
     startDate = originDate.date()
     startDate_formatted = str(startDate.toPyDate())
     if origin.text() == '' or dest.text() == '':
@@ -46,25 +47,42 @@ def fetchFlights():
         booleanVal, userCity, userState = cityStateMapping(originPlace)
         booleanVal2, userCity2, userState2 = cityStateMapping(destPlace)
         
-        print(userCity, userCity2)
+        # Debug:
+        # print(userCity, userCity2)
 
         if booleanVal==False or booleanVal2==False:
-            statusLabel.setText('Enter valid city-state combination')
+            statusLabel.move(160,160)
+            statusLabel.setText('Enter valid city-state combination in <city>,<state> format')
             statusLabel.adjustSize()
         else:
             found, originCode, destCode = airportCode(userCity, userCity2)
-            print(found, originCode, destCode)
+
+            # Debug:
+            # print(found, originCode, destCode)
+
             if found == True:
                 if roundTrip.isChecked():
                     endDate = returnDate.date()
                     endDate_formatted = str(endDate.toPyDate())
-                    print(endDate_formatted)
-                    df = call_round_function(originCode, destCode, startDate_formatted, endDate_formatted)
-                    # statusLabel.setText('Could not fetch flights from server. Try Again.')
+                    if endDate_formatted < startDate_formatted:
+
+                        # Debug:
+                        # print('Date error')
+                        # print(startDate_formatted, endDate_formatted)
+
+                        statusLabel.move(160,160)
+                        statusLabel.setText('Please make sure return date is after origin date')
+                        statusLabel.adjustSize()
+                    else:
+                        # Debug:
+                        # print(endDate_formatted)
+                        df = call_round_function(originCode, destCode, startDate_formatted, endDate_formatted)
                 else:
                     df = call_single_function(originCode, destCode, startDate_formatted)
-                    # statusLabel.setText('Could not fetch flights from server. Try Again.')
-                print(df)
+
+                # Debug:
+                # print(df)
+
                 model = pandasModel(df)
                 view = QTableView()
                 view.setModel(model)
@@ -72,6 +90,7 @@ def fetchFlights():
                 statusLabel.setText("")
                 newWindow = QWidget(view)
                 newWindow.resize(800, 800)
+                newWindow.setWindowTitle('Flight Information')
                 newLayout = QVBoxLayout(view)
                 newLayout.addWidget(newWindow)
                 newWindow.show()
@@ -88,27 +107,29 @@ def displayWeather():
         statusLabel.adjustSize()
     else:
         weatherForecast = fetchWeather(dest.text())
-        print(weatherForecast)
+
+        # Debug:
+        # print(weatherForecast)
+
         statusLabel.setText('')
         weatherWindow = QWidget()
-        weatherWindow.setWindowTitle('Weather Forecast')
+        weatherWindow.setWindowTitle('Weather Forecast for ' + dest.text() + ' in Degrees Farenheit')
         weatherWindow.resize(1150, 200)
         weatherLayout = QHBoxLayout()
         weatherLayout.addWidget(weatherWindow)
         pic = QLabel(weatherWindow)
         pic.setGeometry(20, 20, 200, 200)
-        #use full ABSOLUTE path to the image, not relative
         picture = weather_mode(weatherForecast)
         if (picture == 'clouds'):
-            pic.setPixmap(QPixmap(os.getcwd() + "/cloudy.png"))
+            pic.setPixmap(QPixmap(os.getcwd() + "/weatherimages/cloudy.png"))
         elif (picture == 'rain'):
-            pic.setPixmap(QPixmap(os.getcwd() + "/rainy.png"))
+            pic.setPixmap(QPixmap(os.getcwd() + "/weatherimages/rainy.png"))
         elif (picture == 'sunny'):
-            pic.setPixmap(QPixmap(os.getcwd() + "/sunny.png"))
+            pic.setPixmap(QPixmap(os.getcwd() + "/weatherimages/sunny.png"))
         elif (picture == 'snow'):
-            pic.setPixmap(QPixmap(os.getcwd() + "/snowflake.png"))
+            pic.setPixmap(QPixmap(os.getcwd() + "/weatherimages/snowflake.png"))
         else:
-            pic.setPixmap(QPixmap(os.getcwd() + "/sunny_cloudy.png"))
+            pic.setPixmap(QPixmap(os.getcwd() + "/weatherimages/sunny_cloudy.png"))
         weatherStatus = QLabel(weatherWindow)
         if weatherForecast.empty:
             weatherStatus.setText('Could not fetch weather forecast data')
@@ -124,47 +145,72 @@ def displayWeather():
 
 def showUserAttractions():
     found,city,state = cityStateMapping(dest.text())
+    # Debug:
+    # print(concatState)
+
     if found:
+        stateAPI = state.replace('_', ' ')
+        stateAPI = stateAPI.split()
+        concatState = ''
+        for s in stateAPI:
+            concatState = concatState + s[0:1].upper() + s[1:] + ' '
+        concatState = concatState.strip()
         if roundTrip.isChecked():
             statusLabel.setText('')
             days = int(abs(returnDate.date().toPyDate() - originDate.date().toPyDate()).days)
-            print(days)
-            print(type(days))
+            if days>3:
+                days = 3
+            elif days == 0:
+                days = 1
             attractions = touristSpots(city,state)
-            print(attractions)
             dfTourist = searchLatLng(state,attractions)
-            print(dfTourist)
             clustered_df = clusterLoc(dfTourist,days)
-            plotOnMap(clustered_df)
+            plotOnMap(clustered_df, concatState)
             df_to_dict(clustered_df)
+            clustered_df.drop(['Latitude', 'Longitude', 'geometry'], axis = 1, inplace = True)
+            clustered_df.sort_values(by = 'cluster_label', inplace=True)
+            finalClustered = clustered_df.rename(columns={'cluster_label': 'Day of Trip'})
+            touristSpotsModel = pandasModel(finalClustered)
+            touristView = QTableView()
+            touristView.setModel(touristSpotsModel)
+            touristView.resize(350, 400)
+            touristWindow = QWidget(touristView)
+            touristWindow.resize(3500, 400)
+            touristLayout = QVBoxLayout(touristView)
+            touristLayout.addWidget(touristWindow)
+            touristWindow.show()
+            touristLayout.addWidget(touristView)
+            touristView.show()
         else:
+            statusLabel.move(160,160)
             statusLabel.setText('Please select a round trip')
             statusLabel.adjustSize()
 
-def switchAppearance():
-    global flag
-    if flag == 1:
-        app.setStyleSheet(qdarktheme.load_stylesheet("light"))
-        flag = 0
-    else:
-        app.setStyleSheet(qdarktheme.load_stylesheet())
-        flag = 1
+# def switchAppearance():
+#     global flag
+#     if flag == 1:
+#         app.setStyleSheet(qdarktheme.load_stylesheet("light"))
+#         flag = 0
+#     else:
+#         app.setStyleSheet(qdarktheme.load_stylesheet())
+#         flag = 1
 
 
 app = QApplication([])
 app.setStyle('Fusion')
-app.setStyleSheet(qdarktheme.load_stylesheet())
 win = QMainWindow()
 win.setGeometry(400, 400, 650, 650)
 win.setWindowTitle('TravelBug')
 banner = QLabel(win)
-banner.setGeometry(0, 0, 3000, 100)
-banner.setPixmap(QPixmap(os.getcwd() + "/TravelBugBanner.png"))
-darkModeToggle = QPushButton(win)
-darkModeToggle.setText('Change Appearance')
-darkModeToggle.clicked.connect(switchAppearance)
-darkModeToggle.adjustSize()
-darkModeToggle.move(470, 590)
+banner.setGeometry(0, 0, 650, 150)
+banner.setPixmap(QPixmap(os.getcwd() + "/banner.png"))
+
+
+# darkModeToggle = QPushButton(win)
+# darkModeToggle.setText('Change Appearance')
+# darkModeToggle.clicked.connect(switchAppearance)
+# darkModeToggle.adjustSize()
+# darkModeToggle.move(470, 590)
 
 statusLabel = QLabel(win)
 statusLabel.setText('')
@@ -240,17 +286,6 @@ userAttractionsButton.setText('See Tourist Attractions')
 userAttractionsButton.adjustSize()
 userAttractionsButton.move(235, 590)
 userAttractionsButton.clicked.connect(showUserAttractions)
-# palette = QPalette()
-# palette.setColor(QPalette.ButtonText, Qt.red)
-# app.setPalette(palette)
 
 win.show()
 sys.exit(app.exec_())
-# window = QWidget()
-# layout = QVBoxLayout()
-# layout.addWidget(QPushButton('Top'))
-# layout.addWidget(QPushButton('Bottom'))
-# layout.addWidget(QPushButton('Hello World'))
-# window.setLayout(layout)
-# window.show()
-# app.exec()

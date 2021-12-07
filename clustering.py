@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Nov 18 19:21:11 2021
-
-@author: Noopur Latkar
-"""
-
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
@@ -19,13 +12,17 @@ from bs4 import BeautifulSoup
 # pip install shapely
 from shapely.geometry import Point
 #pip install geopandas
-
+import contextily as cx
+from bs4 import BeautifulSoup
+# pip install shapely
+import geopandas as gpd
+from geopandas import GeoDataFrame
+import json
+import os
 
 
 def clusterLoc(df,days):
     df.dropna(axis=0,how='any',subset=['Latitude','Longitude'],inplace=True)
-    print(df)
-    
     K_clusters = range(1,5)
     kmeans = [KMeans(n_clusters=i) for i in K_clusters]
     Y_axis = df[['Latitude']]
@@ -45,14 +42,15 @@ def clusterLoc(df,days):
     # Labels of each point
     labels = kmeans.predict(df[df.columns[1:3]]) 
     df.plot.scatter(x = 'Latitude', y = 'Longitude', c=labels, s=50, cmap='viridis')
-    print(df)
+    plt.title('Grouping Attractions by Cluster (unique color for each cluster)')
+    plt.xticks(rotation = 90)
+    plt.show()
     return(df)
 
 
 
 def searchLatLng(state, attractions):
     addresses = [i+', '+state for i in attractions]
-    print(addresses)
     locations = list()
    
     for address in addresses:
@@ -71,13 +69,14 @@ def searchLatLng(state, attractions):
 def touristSpots(city,state):
     city_state = str(city).lower()+'-'+str(state).lower()
     city_state = city_state.replace(' ','-')
-    print(city_state)
+    city_state = city_state.replace('_', '-')
     
-    httpString = 'https://www.attractionsofamerica.com/attractions/'+city_state+'-top-10-attractions.php'
+    if city_state == 'new-york-new-york':
+        httpString = 'https://www.attractionsofamerica.com/attractions/new-york-city-top-10-attractions.php'
+    else:
+        httpString = 'https://www.attractionsofamerica.com/attractions/'+city_state+'-top-10-attractions.php'
     page = requests.get(httpString)
     soup = BeautifulSoup(page.content,'html.parser')
-    #container = soup.findAll("div", {"class": "pl10 pr10 pb10"})
-    
     headers = soup.findAll('h2')
     attractions = list()
     for h in headers:
@@ -89,32 +88,59 @@ def touristSpots(city,state):
     
 
 def cityStateMapping(dest):
-    usercity,userstate = dest.split(',')
-    usercity = usercity.strip().lower().replace(" ","_")
-    userstate = userstate.strip().lower().replace(" ","_")
-    df = pd.read_excel("uscities.xlsx", usecols = 'A,D')
-    df['city'] = df['city'].str.replace(" ","_").str.lower()
-    df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
-    print(df)
-    if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
-        return (True,usercity,userstate)
-    else:
-        return (False,0,0)
+    try:
+        usercity,userstate = dest.split(',')
+        usercity = usercity.strip().lower().replace(" ","_")
+        userstate = userstate.strip().lower().replace(" ","_")
+        df = pd.read_excel(os.getcwd() + "/data/uscities.xlsx", usecols = 'A,D')
+        df['city'] = df['city'].str.replace(" ","_").str.lower()
+        df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
+        if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
+            return (True,usercity,userstate)
+        else:
+            return (False,0,0)
+    except:
+        return (False, 0, 0)
+
 
 
 def df_to_dict(clustered_df):
     cluster_dict = clustered_df.groupby('cluster_label')['Address'].apply(list)
     cluster_dict = cluster_dict.reset_index()
     area_dict = dict(zip(cluster_dict.cluster_label, cluster_dict.Address))
-    print(area_dict)
     return(area_dict)
 
+def plotOnMap(df, concatState):
+    plotdf = pd.DataFrame(df, columns=['Latitude', 'Longitude'])
+    plotdf['Latitude'] = pd.to_numeric(plotdf['Latitude'])
+    plotdf['Longitude'] = pd.to_numeric(plotdf['Longitude'])
+    geometry = [Point(xy) for xy in zip(plotdf['Longitude'], plotdf['Latitude'])]
+    gdf = GeoDataFrame(df, geometry=geometry)   
+    
+    url = 'https://gist.githubusercontent.com/mshafrir/2646763/raw/8b0dbb93521f5d6889502305335104218454c2bf/states_hash.json'
+    response = requests.get(url).text
+    response_json = json.loads(response)
+    statesJSON = invertJSON(response_json)
+    stateCode = statesJSON[concatState]
+
+    usa = gpd.read_file(os.getcwd() + '/shapefiles/states.shp')
+    usa = usa[usa.STATE_ABBR == stateCode]
+    ax = gdf.plot(ax=usa.plot(figsize = (10, 10)), c = gdf.cluster_label, marker = 'o', markersize = 15, legend = True)
+    cx.add_basemap(ax, crs = gdf.crs, zoom = 18)
+    plt.title('Cluster Map for State')
+    plt.show()
+    
+def invertJSON(json):
+    ret = {}
+    for key in json.keys():
+        ret[json[key]] = key
+    return ret
 
 def airportCode(origin,dest):
     origin = origin.lower().replace(' ','_')
     dest = dest.lower().replace(' ','_')
     col = ['municipality','local_code','type','score']
-    df = pd.read_csv("us-airports.csv", usecols = col)
+    df = pd.read_csv(os.getcwd() + "/data/us-airports.csv", usecols = col)
     df = df.iloc[1: , :]
     df_filtered_large = df[df['type'] == 'large_airport']
     df_filtered_medium = df[df['type'] == 'medium_airport']
@@ -122,7 +148,6 @@ def airportCode(origin,dest):
     
     
     df_filtered['municipality'] = df_filtered['municipality'].str.lower().str.replace(" ","_")
-    print(df_filtered)
     origin_df = df_filtered[df_filtered['municipality'] == origin]
     
     if(not origin_df.empty):
@@ -134,7 +159,6 @@ def airportCode(origin,dest):
     
     
     dest_df = df_filtered[df_filtered['municipality'] == dest]
-    print(dest_df)
     if(not dest_df.empty):
         dest_found = True
         dest_df['score'] = dest_df['score'].astype(str).astype(int)
@@ -144,34 +168,8 @@ def airportCode(origin,dest):
     else:
         dest_found = False
         
-    print(origin_found and dest_found, origin_code, dest_code)
-    return(origin_found and dest_found, origin_code, dest_code)
+    return (origin_found and dest_found, origin_code, dest_code)
     
-        
-'''def main():
-    dest_city = 'Miami'
-    origin = 'Pittsburgh'
-    dest_state = 'Texas'
-    #from user
-    found,city,state = cityStateMapping(dest_city)
-    attractions = touristSpots(city,state)
-    
-    # Number of Travel days entered by user
-    days = 3 #from user
-    
-    #attractions = ['Mount Washington','The Andy Warhol Museum','Heinz Field','Phipps Conservatory','Point State Park','Pittsburgh Zoo & PPG Aquarium','Carnegie Mellon University']
-    
-    df = searchLatLng(state,attractions)
-    clustered_df = clusterLoc(df,days)
-    df_to_dict(clustered_df)
-    airportCode(origin,dest_city)
-    
-    
-
-if __name__ == '__main__':
-    main()
-    
-'''  
     
     
     

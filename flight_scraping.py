@@ -149,7 +149,6 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     time.sleep(5) 
     soup=BeautifulSoup(driver.page_source, 'lxml')
     if soup.find_all('p')[0].getText() == "Please confirm that you are a real KAYAK user.":
-        print("Kayak thinks I'm a bot, which I am ... so let's wait a bit and try again")
         driver.close()
         time.sleep(10)
         #Need to try again
@@ -242,20 +241,3 @@ def call_single_function(origin,destination,startdate):
     results_single_df = result_df.rename(columns={'airline': 'Airline', 'price': 'Price','departure_time_origin_flight':origin+' departure time','arrival_time_destintion_flight':destination+' arrival time','origin':'Origin','destination':'Destination','currency':'Currency'})
     results_single_df= results_single_df.sort_values(by=['Price'])
     return results_single_df
-    
-# if __name__=="__main__":
-#     #COMING FROM USER INPUT
-#     trip_type="single"
-#     if(trip_type=="single"):
-#         origin= 'LAX'
-#         destination = 'JFK'
-#         startdate = '2021-12-08'
-#         result_single= call_single_function(origin,destination,startdate)
-#         print(result_single)
-#     else:      
-#         origin= 'LAX'
-#         destination = 'JFK'
-#         startdate = '2021-12-08'
-#         enddate= '2021-12-10'
-#         result_round= call_round_function(origin,destination,startdate,enddate)
-#         print(result_round)
