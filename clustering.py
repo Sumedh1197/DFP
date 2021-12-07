@@ -138,7 +138,7 @@ def df_to_dict(clustered_df):
 
 
 '''
-Function plots clusterest tourist attractions on state map using geopandas
+Function plots clustered tourist attractions on state map using geopandas
 '''  
 
 def plotOnMap(df, concatState):
@@ -166,6 +166,15 @@ def invertJSON(json):
     for key in json.keys():
         ret[json[key]] = key
     return ret
+
+
+
+'''
+Function maps city, state to a respective airport using CSV, returns boolean, and airport codes for origin and destination city
+@param: origin, dest
+        1. origin - origin city
+        2. destination - destination city
+'''
 
 def airportCode(origin,dest):
     origin = origin.lower().replace(' ','_')
