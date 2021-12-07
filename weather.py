@@ -32,3 +32,18 @@ def fetchWeather(cityName):
     result=weather_df.groupby('date_column').agg({'Max Temperature':'max','Min Temperature':'min','Temperature':'mean','Description':lambda x: pd.Series.mode(x).iat[0]})
     result.reset_index(level=0, inplace=True)
     return result
+
+#Check the most common weather mode for the day
+def weather_mode(df):
+    a= df['Description'].mode()[0]
+    if(a.str.contains('clouds')):
+        return "clouds"
+    elif(a.str.contains('rain')):
+        return "rain"
+    elif(a.str.contains('sun')):
+        return "sunny"
+    elif(a.str.contains('snow')):
+        return "snow"
+    else:
+        return "default"   
+    
