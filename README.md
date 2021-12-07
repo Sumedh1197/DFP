@@ -19,7 +19,7 @@ To install the dependencies, there is a requirements.txt in the repository. Usin
 >`pip install -r requirements.txt`
 2.  **Install ChromeDriver**
 ChromeDriver is required for the code written on Selenium for scraping Kayak.com for flights. Weh have provided the chromedriver for MAC OS and Windows however below is the link for downloading it separately. The Selenium web driver speaks directly to the browser using the browser’s own engine to control it.
-- Download Chrome WebDriver - https://sites.google.com/a/chromium.org/chromedriver/download
+- Download Chrome WebDriver according to your existing version - https://sites.google.com/a/chromium.org/chromedriver/download
 - Chrome agent used: Chrome/73.0.3683.68
 3. **Installing Geopandas and Contextily on Windows**
 Installation of geopandas and Contextily on MAC OS can be done using pip install geopandas and pip install contextily. However on window's we suggest to follow the link below as it is a little more complex: 
