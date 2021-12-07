@@ -36,13 +36,13 @@ def fetchWeather(cityName):
 #Check the most common weather mode for the day
 def weather_mode(df):
     a= df['Description'].mode()[0]
-    if(a.str.contains('clouds')):
+    if 'cloud' in a.lower():
         return "clouds"
-    elif(a.str.contains('rain')):
+    elif 'rain' in a.lower():
         return "rain"
-    elif(a.str.contains('sun')):
+    elif 'sun' in a.lower():
         return "sunny"
-    elif(a.str.contains('snow')):
+    elif 'snow' in a.lower():
         return "snow"
     else:
         return "default"   
