@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 from datetime import date, timedelta, datetime
 import time
+import os
 from os_check import returnOS
 
 def scrapeRound(origin, destination, startdate, enddate, requests,results_round):   
@@ -21,7 +22,7 @@ def scrapeRound(origin, destination, startdate, enddate, requests,results_round)
     # chrome_options.add_argument("--headless")
     chrome_options.add_experimental_option('useAutomationExtension', False)
     if returnOS() == 'Darwin':
-        driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+        driver = webdriver.Chrome(os.getcwd() + '/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     else:
         driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(5)
@@ -137,7 +138,7 @@ def scrapeOneWay(origin, destination, startdate, requests,results_single):
     chrome_options.add_argument("--headless")   
     chrome_options.add_experimental_option('useAutomationExtension', False) 
     if returnOS() == 'Darwin':
-        driver = webdriver.Chrome('/Users/rohit/DFP/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
+        driver = webdriver.Chrome(os.getcwd() + '/chromedriver', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     else:
         driver = webdriver.Chrome('chromedriver.exe', options=chrome_options, desired_capabilities=chrome_options.to_capabilities())
     driver.implicitly_wait(5)
