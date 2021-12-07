@@ -110,19 +110,16 @@ Function maps destination_city to its corresponding state, returns boolean value
 '''        
 
 def cityStateMapping(dest):
-    try:
-        usercity,userstate = dest.split(',')
-        usercity = usercity.strip().lower().replace(" ","_")
-        userstate = userstate.strip().lower().replace(" ","_")
-        df = pd.read_excel(os.getcwd() + "/data/uscities.xlsx", usecols = 'A,D')
-        df['city'] = df['city'].str.replace(" ","_").str.lower()
-        df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
-        if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
-            return (True,usercity,userstate)
-        else:
-            return (False,0,0)
-    except:
-        return (False, 0, 0)
+    usercity,userstate = dest.split(',')
+    usercity = usercity.strip().lower().replace(" ","_")
+    userstate = userstate.strip().lower().replace(" ","_")
+    df = pd.read_excel(os.getcwd() + "/data/uscities.xlsx", usecols = 'A,D')
+    df['city'] = df['city'].str.replace(" ","_").str.lower()
+    df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
+    if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
+        return (True,usercity,userstate)
+    else:
+        return (False,0,0)
 
 
 '''
