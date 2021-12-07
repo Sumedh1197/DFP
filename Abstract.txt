@@ -7,6 +7,8 @@ Features-
 2. Extracting Weather forecast using the weather API
 3. Using Geospatial clustering to retrieve tourist spot locations for the destination city
 
+Video Link- https://www.youtube.com/watch?v=LCEgs3Z1kOA
+
 Packages used: 
 pandas
 matplotlib
