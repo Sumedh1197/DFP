@@ -89,10 +89,17 @@ def touristSpots(city,state):
     
 
 def cityStateMapping(dest):
-    df = pd.read_excel("uscities_short.xlsx", usecols = 'A,D')
-    state = df['state_name'].loc[df['city'].str.lower() == dest.lower()]
-    state = state.to_string(index=False)
-    return(dest,state)
+    usercity,userstate = dest.split(',')
+    usercity = usercity.strip().lower().replace(" ","_")
+    userstate = userstate.strip().lower().replace(" ","_")
+    df = pd.read_excel("uscities.xlsx", usecols = 'A,D')
+    df['city'] = df['city'].str.replace(" ","_").str.lower()
+    df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
+    print(df)
+    if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
+        return (True,usercity,userstate)
+    else:
+        return (False,0,0)
 
 
 def df_to_dict(clustered_df):
@@ -134,8 +141,10 @@ def airportCode(origin,dest):
     
         
 def main():
-    dest_city = 'Dallas' #from user
-    city,state = cityStateMapping(dest_city)
+    dest_city = 'Pittsburgh,Pennsylvania'
+    dest_state = 'Texas'
+    #from user
+    found,city,state = cityStateMapping(dest_city)
     attractions = touristSpots(city,state)
     
     # Number of Travel days entered by user
