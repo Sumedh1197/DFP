@@ -7,7 +7,7 @@ Features-
 2. Extracting weather forecast using the weather API
 3. Retrieving tourist spot locations of destination city and using Geospatial Clustering to create day-wise itinerary
 
-Video Link- https://www.youtube.com/watch?v=LCEgs3Z1kOA
+Video Link-https://youtu.be/laB0nQxFThk
 
 Packages used: 
 pandas
