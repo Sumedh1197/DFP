@@ -36,4 +36,4 @@ Window's Installation for both we first need to download the binaries from https
 Run  gui.py file 
 >`python gui.py`
 >`python3 gui.py`
-3. Instruction Video: https://youtu.be/laB0nQxFThk
+2. Demonstration Video: https://youtu.be/laB0nQxFThk
