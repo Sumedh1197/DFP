@@ -42,9 +42,15 @@ def fetchFlights():
     else:
         originPlace = origin.text()
         destPlace = dest.text()
-        booleanVal, userCity, userState = cityStateMapping(originPlace)
-        booleanVal2, userCity2, userState2 = cityStateMapping(destPlace)
-        
+        if ',' in originPlace and ',' in destPlace:
+            booleanVal, userCity, userState = cityStateMapping(originPlace)
+            booleanVal2, userCity2, userState2 = cityStateMapping(destPlace)
+        else:
+            booleanVal = False
+            booleanVal2 = False
+            statusLabel.move(160,160)
+            statusLabel.setText('Make sure input is in correct <city>,<state> format')
+            statusLabel.adjustSize()
         # Debug:
         # print(userCity, userCity2)
 
