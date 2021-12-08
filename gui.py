@@ -1,25 +1,26 @@
-# from PyQt5.QtWidgets import *
-# from PyQt5.QtCore import Qt
-# from PyQt5.QtGui import QPalette
-# from PyQt5.QtWidgets import QApplication, QPushButton
 # importing libraries
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
-
-from clustering import *
-from weather import *
-from pandas_Model import *
-from flight_scraping import *
 import sys
 import os
 import pandas as pd
 
+# .py file imports
+from clustering import *
+from weather import *
+from pandas_Model import *
+from flight_scraping import *
+
+
 userCity2 = ''
 userState2 = ''
-flag = 1
 
+'''
+Function enables the return date label depending
+on whether the roundTrip radio button is checked
+'''
 def displayReturnDateLabel():
     if roundTrip.isChecked():
         returnDateLabel.setText('Return Date: ')
@@ -28,6 +29,10 @@ def displayReturnDateLabel():
         returnDateLabel.setText(' ')
         returnDate.hide()
 
+'''
+Function fetches flights and display the new window
+with the DataFrame of flights with parameters that the user enters
+'''
 def fetchFlights():
     global userCity2
     global userState2
@@ -104,6 +109,10 @@ def fetchFlights():
                 statusLabel.setText('These cities have no connecting flights')
                 statusLabel.adjustSize()
 
+'''
+Function error checks and displays the weather forecast
+window in the GUI.
+'''
 def displayWeather():
     if dest.text() == '':
         statusLabel.move(160,300)
@@ -147,6 +156,10 @@ def displayWeather():
         weatherStatus.move(220, 40)
         weatherWindow.show()
 
+'''
+Function displays userAttraction plots and geoPlotting maps
+also pops up a window with the cluster labels and attractions
+'''
 def showUserAttractions():
     found,city,state = cityStateMapping(dest.text())
     # Debug:
@@ -190,16 +203,7 @@ def showUserAttractions():
             statusLabel.setText('Please select a round trip')
             statusLabel.adjustSize()
 
-# def switchAppearance():
-#     global flag
-#     if flag == 1:
-#         app.setStyleSheet(qdarktheme.load_stylesheet("light"))
-#         flag = 0
-#     else:
-#         app.setStyleSheet(qdarktheme.load_stylesheet())
-#         flag = 1
-
-
+# Init Main Application Window and set style along with size
 app = QApplication([])
 app.setStyle('Fusion')
 win = QMainWindow()
@@ -209,46 +213,47 @@ banner = QLabel(win)
 banner.setGeometry(0, 0, 650, 150)
 banner.setPixmap(QPixmap(os.getcwd() + "/banner.png"))
 
-
-# darkModeToggle = QPushButton(win)
-# darkModeToggle.setText('Change Appearance')
-# darkModeToggle.clicked.connect(switchAppearance)
-# darkModeToggle.adjustSize()
-# darkModeToggle.move(470, 590)
-
+# Init status label
 statusLabel = QLabel(win)
 statusLabel.setText('')
 statusLabel.adjustSize()
 statusLabel.move(160,300)
 
-
+# Init origin label
 originLabel = QLabel(win)
 originLabel.setText('Origin City, State')
 originLabel.adjustSize()
 originLabel.move(20,236)
+# Init origin text box
 origin = QLineEdit(win)
 origin.setGeometry(210, 230, 200, 30)
 
+# Init destination label
 destLabel = QLabel(win)
 destLabel.setText('Destination City, State')
 destLabel.adjustSize()
 destLabel.move(20,306)
+# Init destination text box
 dest = QLineEdit(win)
 dest.setGeometry(210, 300, 200, 30)
 
+# Init fetch weather button
 weatherButton = QPushButton(win)
 weatherButton.setText("Check Weather Forecast")
 weatherButton.adjustSize()
 weatherButton.move(430, 265)
 weatherButton.clicked.connect(displayWeather)
 
+# Layout
 layout = QGridLayout()
  
+ # Init trip type label
 tripTypeLabel = QLabel(win)
 tripTypeLabel.setText("Trip Type:")
 tripTypeLabel.adjustSize()
 tripTypeLabel.move(20, 370)
 
+# Init one way trip radio button
 single = QRadioButton(win)
 single.setText("One-Way")
 single.move(40, 410)
@@ -256,12 +261,14 @@ single.setChecked(True)
 single.clicked.connect(displayReturnDateLabel)
 layout.addWidget(single, 0, 0)
  
+# Init round trip radio button
 roundTrip = QRadioButton(win)
 roundTrip.setText("Round")
 roundTrip.move(40,460)
 roundTrip.clicked.connect(displayReturnDateLabel)
 layout.addWidget(single, 0, 1)
 
+# Origin Date Labels and Date Box
 originDateLabel = QLabel(win)
 originDateLabel.setText('Origin Date: ')
 originDateLabel.move(40, 510)
@@ -271,6 +278,7 @@ originDate.setDateRange(QtCore.QDate.currentDate(), d1)
 originDate.setDateTime(QtCore.QDateTime.currentDateTime())
 originDate.setGeometry(150, 510, 130, 30)
 
+# Return Date Labels and Date Box
 returnDateLabel = QLabel(win)
 returnDateLabel.setText(' ')
 returnDateLabel.move(320, 510)
@@ -279,17 +287,21 @@ returnDate.setDateTime(QtCore.QDateTime.currentDateTime())
 returnDate.setGeometry(430, 510, 130, 30)
 returnDate.hide()
 
+# Init search button
 searchButton = QPushButton(win)
 searchButton.setText('Search Flights')
 searchButton.adjustSize()
 searchButton.move(42, 590)
 searchButton.clicked.connect(fetchFlights)
 
+# Init tourist attractions button
 userAttractionsButton = QPushButton(win)
 userAttractionsButton.setText('See Tourist Attractions')
 userAttractionsButton.adjustSize()
 userAttractionsButton.move(235, 590)
 userAttractionsButton.clicked.connect(showUserAttractions)
 
+# Display main window
 win.show()
+# Start App
 sys.exit(app.exec_())
