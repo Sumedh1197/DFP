@@ -1,6 +1,8 @@
 pandas
 matplotlib
 sklearn
+seaborn
+contextily
 requests
 bs4 
 shapely

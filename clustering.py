@@ -9,12 +9,9 @@ import urllib.parse
 import sys
 import requests
 from bs4 import BeautifulSoup
-# pip install shapely
 from shapely.geometry import Point
-#pip install geopandas
 import contextily as cx
 from bs4 import BeautifulSoup
-# pip install shapely
 import geopandas as gpd
 from geopandas import GeoDataFrame
 import json
