@@ -25,12 +25,12 @@ Installation of geopandas and Contextily on MAC OS can be done using pip install
 Window's Geopandas installation: https://stackoverflow.com/questions/56958421/pip-install-geopandas-on-windows/60936148
 or 
 Window's Installation for both we first need to download the binaries from https://www.lfd.uci.edu/~gohlke/pythonlibs/ and then run the following commands:
-pip install GDAL-2.3.3-cp36-cp36m-win32.whl && setx GDAL_VERSION "2.3.3"
-pip install Fiona-1.8.4-cp36-cp36m-win32.whl
-pip install geopandas-0.4.0-py2.py3-none-any.whl
-pip install proj
-pip install Shapely-1.6.4.post1-cp36-cp36m-win32.whl
-pip install Cartopy-0.17.0-cp36-cp36m-win32.whl
-pip install rasterio-1.0.13-cp36-cp36m-win32.whl
-pip install contextily
+>`pip install GDAL-2.3.3-cp36-cp36m-win32.whl && setx GDAL_VERSION "2.3.3"`
+>`pip install Fiona-1.8.4-cp36-cp36m-win32.whl`
+>`pip install geopandas-0.4.0-py2.py3-none-any.whl`
+>`pip install proj`
+>`pip install Shapely-1.6.4.post1-cp36-cp36m-win32.whl`
+>`pip install Cartopy-0.17.0-cp36-cp36m-win32.whl`
+>`pip install rasterio-1.0.13-cp36-cp36m-win32.whl`
+>`pip install contextily`
 
