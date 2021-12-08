@@ -9,17 +9,15 @@
 	b. Scrape for flights for the given dates. User will be returned a tabular format of the best flights scraped from Kayak.com. 
 	c. User can retrieve the destination city attractions clustered by their location based on a geolocational mapping function.
 
-# How to Run
-1. Instruction: Run  gui.py file 
-2. Instruction Video: https://youtu.be/laB0nQxFThk
 # Installing Additional Packages
 1. **Dependent Packages Installation**
 To install the dependencies, there is a requirements.txt in the repository. Using the following command all can be installed using pip/pip3 in the terminal-
 >`pip install -r requirements.txt`
+	The user must make sure that python 3.xx or higher is installed on the system and pip is functioning. If the installation of libraries fails from the requirements file, one should try individually installing the packages that fail.
 2.  **Install ChromeDriver**
 ChromeDriver is required for the code written on Selenium for scraping Kayak.com for flights. Weh have provided the chromedriver for MAC OS and Windows however below is the link for downloading it separately. The Selenium web driver speaks directly to the browser using the browser’s own engine to control it.
-- Download Chrome WebDriver according to your existing version - https://sites.google.com/a/chromium.org/chromedriver/download
-- Chrome agent used: Chrome/73.0.3683.68
+- Download Chrome WebDriver according to your chrome webdriver version - https://sites.google.com/a/chromium.org/chromedriver/downloads
+- Chrome agent used for testing: Chrome/73.0.3683.68
 3. **Installing Geopandas and Contextily on Windows**
 Installation of geopandas and Contextily on MAC OS can be done using pip install geopandas and pip install contextily. However on window's we suggest to follow the link below as it is a little more complex: 
 Window's Geopandas installation: https://stackoverflow.com/questions/56958421/pip-install-geopandas-on-windows/60936148
@@ -34,3 +32,9 @@ Window's Installation for both we first need to download the binaries from https
 >`pip install rasterio-1.0.13-cp36-cp36m-win32.whl`
 >`pip install contextily`
 
+# How to Run
+1. Instruction:
+Run  gui.py file 
+>`python gui.py`
+>`python3 gui.py`
+2. Demonstration Video: https://youtu.be/laB0nQxFThk
