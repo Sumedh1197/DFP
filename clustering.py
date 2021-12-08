@@ -1,3 +1,4 @@
+#Packages to be imported
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
@@ -17,6 +18,12 @@ from geopandas import GeoDataFrame
 import json
 import os
 
+'''
+Function performs k-means clustering on geo-locations of tourist places, returns a dataframe of locations and their associated clusters
+@param: dataframe, days of travel 
+        1. dataframe - tourist attractions and their locations (lat,lng)
+        2. days of travel - calculated from startdate enddate entered by user
+'''
 
 def clusterLoc(df,days):
     df.dropna(axis=0,how='any',subset=['Latitude','Longitude'],inplace=True)
@@ -45,6 +52,12 @@ def clusterLoc(df,days):
     return(df)
 
 
+'''
+Function fetches geo-locations for tourist places using API, returns a dataframe of location names and their associated latitudes and longitudes
+@param: state, attractions 
+        1. state - destination state of city entered by user
+        2. attractions - list of top tourist attractions in the destination_city
+'''
 
 def searchLatLng(state, attractions):
     addresses = [i+', '+state for i in attractions]
@@ -59,9 +72,14 @@ def searchLatLng(state, attractions):
             print("Invalid address : " + address)
     df = pd.DataFrame(locations, columns = ['Address', 'Latitude', 'Longitude'])
     return(df)
-    
-        
 
+
+'''
+Function fetches top tourist attractions for destination_city by web scraping, returns a list of tourist attractions for that city
+@param: city, state 
+        1. city - destination city entered by user
+        2. state - state of corresponding destination_city
+'''        
 
 def touristSpots(city,state):
     city_state = str(city).lower()+'-'+str(state).lower()
@@ -82,30 +100,40 @@ def touristSpots(city,state):
             attractions.append(stripped)
     return(attractions)
         
-    
+
+'''
+Function maps destination_city to its corresponding state, returns boolean value if the combination exists in CSV
+@param: dest - destination_city entered by user
+'''        
 
 def cityStateMapping(dest):
-    try:
-        usercity,userstate = dest.split(',')
-        usercity = usercity.strip().lower().replace(" ","_")
-        userstate = userstate.strip().lower().replace(" ","_")
-        df = pd.read_excel(os.getcwd() + "/data/uscities.xlsx", usecols = 'A,D')
-        df['city'] = df['city'].str.replace(" ","_").str.lower()
-        df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
-        if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
-            return (True,usercity,userstate)
-        else:
-            return (False,0,0)
-    except:
-        return (False, 0, 0)
+    usercity,userstate = dest.split(',')
+    usercity = usercity.strip().lower().replace(" ","_")
+    userstate = userstate.strip().lower().replace(" ","_")
+    df = pd.read_excel(os.getcwd() + "/data/uscities.xlsx", usecols = 'A,D')
+    df['city'] = df['city'].str.replace(" ","_").str.lower()
+    df['state_name'] = df['state_name'].str.replace(" ","_").str.lower()
+    if(df.loc[df.city == usercity, 'state_name'].values[0].lower() == userstate):
+        return (True,usercity,userstate)
+    else:
+        return (False,0,0)
 
 
+'''
+Function converts dataframe to dictionary by taking cluster_labels as keys and corresponding attractions as values
+@param: clustered_df - dataframe contains tourists places and their cluster labels
+'''  
 
 def df_to_dict(clustered_df):
     cluster_dict = clustered_df.groupby('cluster_label')['Address'].apply(list)
     cluster_dict = cluster_dict.reset_index()
     area_dict = dict(zip(cluster_dict.cluster_label, cluster_dict.Address))
     return(area_dict)
+
+
+'''
+Function plots clustered tourist attractions on state map using geopandas
+'''  
 
 def plotOnMap(df, concatState):
     plotdf = pd.DataFrame(df, columns=['Latitude', 'Longitude'])
@@ -132,6 +160,15 @@ def invertJSON(json):
     for key in json.keys():
         ret[json[key]] = key
     return ret
+
+
+
+'''
+Function maps city, state to a respective airport using CSV, returns boolean, and airport codes for origin and destination city
+@param: origin, dest
+        1. origin - origin city
+        2. destination - destination city
+'''
 
 def airportCode(origin,dest):
     origin = origin.lower().replace(' ','_')
