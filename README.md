@@ -9,9 +9,6 @@
 	b. Scrape for flights for the given dates. User will be returned a tabular format of the best flights scraped from Kayak.com. 
 	c. User can retrieve the destination city attractions clustered by their location based on a geolocational mapping function.
 
-# How to Run
-1. Instruction: Run  gui.py file 
-2. Instruction Video: https://youtu.be/laB0nQxFThk
 # Installing Additional Packages
 1. **Dependent Packages Installation**
 To install the dependencies, there is a requirements.txt in the repository. Using the following command all can be installed using pip/pip3 in the terminal-
@@ -34,3 +31,9 @@ Window's Installation for both we first need to download the binaries from https
 >`pip install rasterio-1.0.13-cp36-cp36m-win32.whl`
 >`pip install contextily`
 
+# How to Run
+1. Instruction:
+Run  gui.py file 
+>`python gui.py`
+>`python3 gui.py`
+3. Instruction Video: https://youtu.be/laB0nQxFThk
